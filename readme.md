@@ -1,3 +1,5 @@
+[![Tests](https://github.com/sentryco/NetTime/actions/workflows/tests.yml/badge.svg)](https://github.com/sentryco/NetTime/actions/workflows/tests.yml)
+
 # NetTime
 
 Network-time-synchronization in swift
