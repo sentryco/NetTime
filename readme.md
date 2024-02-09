@@ -1,6 +1,6 @@
 # NetTime
 
-NetTime provides network-time-synchronization for swift
+Network-time-synchronization in swift
 
 ## Features
 
