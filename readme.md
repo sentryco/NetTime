@@ -1,6 +1,6 @@
 [![Tests](https://github.com/sentryco/NetTime/actions/workflows/tests.yml/badge.svg)](https://github.com/sentryco/NetTime/actions/workflows/tests.yml)  [![codebeat badge](https://codebeat.co/badges/5d08d45f-5080-479c-88a5-d2621eac1eb6)](https://codebeat.co/projects/github-com-sentryco-nettime-main)
 
-# NetTime
+# 🕑 NetTime
 
 Network-time-synchronization in swift
 
