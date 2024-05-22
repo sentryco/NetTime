@@ -61,3 +61,7 @@ Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTIN
 ## License
 
 NetTime is released under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Todo:
+- Do more exploration into side-effects
+- Comb the competitors for ways to improve

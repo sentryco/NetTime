@@ -11,9 +11,9 @@ internal final class TimeMeasure {
    internal typealias Operation = () throws -> Void 
    /**
     * Measures how long a closure takes to complete
-    * - Note: Great for UnitTesting
-    * - Note: it's also possible to use. let startTime = CFAbsoluteTimeGetCurrent(); CFAbsoluteTimeGetCurrent() - startTime
-    * fix: add param comment
+    * - Note: This method is great for UnitTesting
+    * - Note: it's also possible to use. `let startTime = CFAbsoluteTimeGetCurrent(); CFAbsoluteTimeGetCurrent() - startTime`
+    * - Fixme: ⚠️️ Add param comment
     * ## Examples:
     * print("\(timeElapsed { sleep(2.2) })") // 2.20000
     */

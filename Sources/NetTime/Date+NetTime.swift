@@ -3,8 +3,8 @@ import Logger
 /**
  * - Description: class which will provide the best estimate of the difference in time between the device's system clock and the time returned by a collection of time servers
  * - Note: This class has Unit-tests
- * - Fixme: ⚠️️ If you want to sync your time to a specific server (e.g. your API server).
- * - Fixme: ⚠️️ If for some reason the Date format your HTTP Server returns is different than the one specified.
+ * - Fixme: ⚠️️ If you want to sync your time to a specific server (e.g. your API server)
+ * - Fixme: ⚠️️ If for some reason the Date format your HTTP Server returns is different than the one specified
  * ## Examples:
  *  Date.updateTime { // Call when app launches etc
  *     print("☀️ Current Date: \(Date().formatted())")
@@ -30,7 +30,7 @@ extension Date {
     * - Remark: Set this at the first opertunity when using the app
     * - Remark: Call this on background queue
     * - Remark: If this is not called e use system time
-    * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈
+    * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
     * - Parameter onComplete: Callback when server has responded
     */
    public static func updateTime(onComplete: @escaping OnComplete = defaultOnComplete) {

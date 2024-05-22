@@ -1,5 +1,8 @@
 import Foundation
-// Fix: im not sure we use this anymore as we jsut use UTC, maybe move to a gist?
+/**
+ * - Fixme: ⚠️️ I'm not sure we use this anymore as we just use UTC, maybe move to a gist?
+ * - Fixme: ⚠️️ I guess we convert back to the users timezone in the presentation layer, so maybe keep around?
+ */
 extension TimeZone {
    /**
     * The Central European Time (CET) time zone.
@@ -55,7 +58,7 @@ extension Date {
       return self.convert(from: TimeZone.current, to: timeZone) // Convert date from current time zone to specified time zone
    }
    /**
-    * Converts the date from one time zone to another.
+    * Converts the date from one time zone to another
     * - Parameters:
     *   - timeZone: The time zone of the original date.
     *   - destinationTimeZone: The time zone to convert the date to.
