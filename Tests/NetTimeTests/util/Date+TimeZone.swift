@@ -6,31 +6,35 @@ import Foundation
 extension TimeZone {
    /**
     * The Central European Time (CET) time zone.
-    * The CET time zone is used in countries such as Germany, France, Italy, and Spain, among others.
+    * - Description: The Central European Time (CET) is a time standard used in Central Europe. It is 1 hour ahead of Coordinated Universal Time (UTC+1) and is used in countries such as Germany, France, Italy, and Spain, among others.
+    * - Note: The CET time zone is used in countries such as Germany, France, Italy, and Spain, among others.
     */
    internal static let cetTimeZone: TimeZone? = .init(abbreviation: "CET")
    /**
     * The Coordinated Universal Time (UTC) time zone.
-    * Same as GMT, the successor
-    * UTC is the primary time standard by which the world regulates clocks and time. 
-    * It is also known as "Zulu time" or "Z time". 
-    * UTC is the successor to Greenwich Mean Time (GMT) 
-    * It is used as a standard time in aviation, military, and other contexts.
+    * - Description: The Coordinated Universal Time (UTC) is the primary time standard by which the world regulates clocks and time. It is not adjusted for daylight saving time and it is used in many internet and World Wide Web standards.
+    * - Note: Same as GMT, the successor
+    * - Note: UTC is the primary time standard by which the world regulates clocks and time. 
+    * - Note: It is also known as "Zulu time" or "Z time". 
+    * - Note: UTC is the successor to Greenwich Mean Time (GMT) 
+    * - Note: It is used as a standard time in aviation, military, and other contexts.
     */
    internal static let utcTimeZone: TimeZone? = .init(abbreviation: "UTC")
    /**
     * The Greenwich Mean Time (GMT) time zone.
-    * GMT is a time zone that is used in the United Kingdom and other countries in the winter. 
-    * It is also known as "Zulu time" or "Z time". 
-    * GMT is 0 hours ahead of Coordinated Universal Time (UTC+0)
-    * +0000
+    * - Description: Greenwich Mean Time (GMT) is a time standard originally referring to mean solar time at the Royal Observatory located in Greenwich, London. It is commonly used in timekeeping and is the time zone used by the prime meridian of the world.
+    * - Note: GMT is a time zone that is used in the United Kingdom and other countries in the winter. 
+    * - Note: It is also known as "Zulu time" or "Z time". 
+    * - Note: GMT is 0 hours ahead of Coordinated Universal Time (UTC+0)
+    * - Note: +0000
     */
    internal static let gmtTimeZone: TimeZone? = .init(abbreviation: "GMT")
    /**
     * The Eastern Standard Time (EST) time zone.
-    * utc -5 nyc time
-    * The EST time zone is used in the eastern part of the United States, including cities such as New York, Washington D.C., and Miami, among others. 
-    * The time zone is 5 hours behind Coordinated Universal Time (UTC-5).
+    * - Description: The Eastern Standard Time (EST) is a time zone that is used in the eastern part of the United States and Canada, and is 5 hours behind Coordinated Universal Time (UTC-5).
+    * - Note: utc -5 nyc time
+    * - Note: The EST time zone is used in the eastern part of the United States, including cities such as New York, Washington D.C., and Miami, among others. 
+    * - Note: The time zone is 5 hours behind Coordinated Universal Time (UTC-5).
     */
    internal static let estTimeZone: TimeZone? = .init(abbreviation: "EST")
 }
@@ -40,6 +44,7 @@ extension TimeZone {
 extension Date {
    /**
     * Returns current time in london gmt / utc +0000
+    * - Description: This function returns the current date and time adjusted to the Coordinated Universal Time (UTC) time zone. It is useful for converting the local date and time to a standardized format that is not affected by daylight saving time or local time zone differences.
     */
    internal func getUTCTimeZoneDate() -> Date? {
       // Calendar.current.dateBySetting(timeZone: .utcTimeZone, of: date)
@@ -47,6 +52,7 @@ extension Date {
       return self.convert(from: utcTimeZone, to: TimeZone.current) // Convert date from UTC to current time zone
    }
    /**
+    * - Description: This function returns a date adjusted to the current time zone from a date that represents a time in a different time zone.
     * - Note: returns a time from another timezone represented in the current timezone
     * - Parameter timeZone: the timezone self represent
     * - Returns: adjusted date
@@ -59,6 +65,7 @@ extension Date {
    }
    /**
     * Converts the date from one time zone to another
+    * - Description: This method is used to convert a date from one time zone to another. It takes the original time zone and the destination time zone as parameters, and returns the date converted to the destination time zone.
     * - Parameters:
     *   - timeZone: The time zone of the original date.
     *   - destinationTimeZone: The time zone to convert the date to.

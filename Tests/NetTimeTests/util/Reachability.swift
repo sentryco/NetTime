@@ -1,8 +1,12 @@
 import Foundation
-
+/**
+ * Reachability is a utility class that provides methods to check the availability of internet connectivity.
+ * It performs a network request to a reliable host and determines if the internet is reachable based on the response.
+ */
 internal class Reachability {
    /**
     * Checks to see if internet is reachable
+    * - fixme: add description
     * - Note: The reason why we do async: https://stackoverflow.com/a/40764725/5389500
     * - Parameters:
     *   - completionHandler: The closure to call with the result of the network check.

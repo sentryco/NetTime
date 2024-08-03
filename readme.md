@@ -65,3 +65,6 @@ NetTime is released under the MIT License. See [LICENSE](LICENSE) for details.
 ## Todo:
 - Do more exploration into side-effects
 - Comb the competitors for ways to improve
+- add Troubleshooting or FAQ section: If there are common issues users run into, addressing them in the README can save time for both you and the users.
+- add Versioning: If you're planning on maintaining this project long-term, it might be helpful to include information about the versioning system you're using.
+- add Screenshots or GIFs: If applicable, visual aids can help users understand how your package works or what it looks like when it's running.
