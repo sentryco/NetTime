@@ -10,12 +10,12 @@ internal final class TimeMeasure {
     * The number of nano-seconds in a second
     * - Description: This constant is used to convert nanoseconds to seconds for time measurement purposes.
     */
-   fileprivate static let nanoToSecond: Double = 1_000_000_000 
+   fileprivate static let nanoToSecond: Double = 1_000_000_000
    /**
     * A closure that takes no parameters and returns nothing
     * - Description: This typealias defines a closure type named Operation that takes no parameters and throws an error if it fails. It is used in the timeElapsed methods to measure the execution time of a given operation.
     */
-   internal typealias Operation = () throws -> Void 
+   internal typealias Operation = () throws -> Void
    /**
     * Measures how long a closure takes to complete
     * - Description: This method measures the execution time of a given closure in seconds. It takes a closure as a parameter, executes it, and returns the time taken for the closure to complete its execution.

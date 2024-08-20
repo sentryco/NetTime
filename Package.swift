@@ -5,15 +5,15 @@ let package = Package(
     name: "NetTime",
     platforms: [
         .macOS(.v14), // macOS 14 and later
-        .iOS(.v17), // iOS 17 and later
+        .iOS(.v17) // iOS 17 and later
     ],
     products: [
         .library(
             name: "NetTime",
-            targets: ["NetTime"]),
+            targets: ["NetTime"])
     ],
     dependencies: [
-        .package(url: "https://github.com/sentryco/Logger.git", branch: "main"),
+        .package(url: "https://github.com/sentryco/Logger.git", branch: "main")
     ],
     targets: [
         .target(
@@ -21,6 +21,6 @@ let package = Package(
             dependencies: ["Logger"]),
         .testTarget(
             name: "NetTimeTests",
-            dependencies: ["NetTime", "Logger"]),
+            dependencies: ["NetTime", "Logger"])
     ]
 )
