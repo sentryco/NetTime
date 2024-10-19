@@ -1,7 +1,9 @@
 import Foundation
 /**
- * Reachability is a utility class that provides methods to check the availability of internet connectivity.
- * It performs a network request to a reliable host and determines if the internet is reachable based on the response.
+ * - Abstract: Reachability is a utility class that provides methods to check
+ *             the availability of internet connectivity.
+ * - Description: It performs a network request to a reliable host and
+ *                determines if the internet is reachable based on the response.
  */
 internal class Reachability {
    /**

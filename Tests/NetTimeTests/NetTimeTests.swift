@@ -29,7 +29,10 @@ final class NetTimeTests: XCTestCase {
 extension NetTimeTests {
    /**
     * Testing time
-    * - Description: This method validates the functionality of time-related features such as time zone conversion, server time synchronization, and network connectivity within the NetTime framework.
+    * - Description: This method validates the functionality of time-related
+    *                features such as time zone conversion, server time
+    *                synchronization, and network connectivity within the NetTime
+    *                framework.
     */
    fileprivate static func time(testCase: XCTestCase) throws {
       try Self.testTimeZoneConversion() // Test time zone conversion functionality of the database
@@ -38,8 +41,12 @@ extension NetTimeTests {
    }
    /**
     * timezone conversion
-    * - Description: This method tests the functionality of time zone conversion within the NetTime framework. It validates the conversion of local time to UTC and vice versa, ensuring the accuracy of these conversions.
-    * - Remark: This is less relevant, but explains how timezone works etc. As we always format to users timezone and save in UTC in DB
+    * - Description: This method tests the functionality of time zone conversion
+    *                within the NetTime framework. It validates the conversion
+    *                of local time to UTC and vice versa, ensuring the accuracy
+    *                of these conversions.
+    * - Remark: This is less relevant, but explains how timezone works etc. As
+    *           we always format to users timezone and save in UTC in DB
     */
    static func testTimeZoneConversion() throws {
       // Swift.print("TimeZone.current: \(TimeZone.current)")
@@ -57,7 +64,10 @@ extension NetTimeTests {
    }
    /**
     * Reachability test (makes sure unit test has network etc)
-    * - Description: This method tests the network connectivity of the device. It uses the Reachability utility class to check if the internet is reachable. This is important for unit tests that require network access.
+    * - Description: This method tests the network connectivity of the device.
+    *                It uses the Reachability utility class to check if the
+    *                internet is reachable. This is important for unit tests
+    *                that require network access.
     * - Fixme: ⚠️️ Add a timer on the reachability, how long it takes etc
     */
    static func testConnectivity(testCase: XCTestCase) throws {
@@ -74,7 +84,11 @@ extension NetTimeTests {
    }
    /**
     * Server time
-    * - Description: This method tests the accuracy and reliability of the server time synchronization within the NetTime framework. It ensures that the time reported by the server is correctly retrieved and formatted, reflecting the precise current time according to the server's clock.
+    * - Description: This method tests the accuracy and reliability of the
+    *                server time synchronization within the NetTime framework.
+    *                It ensures that the time reported by the server is
+    *                correctly retrieved and formatted, reflecting the precise
+    *                current time according to the server's clock.
     * - Fixme: ⚠️️⚠️️ Format time with milli / nano seconds etc -> See history date formater
     * - Remark: Date is stored in Swift as UTC time, i.e. as at longitude 0.0 - which used to be called Greenwich Mean Time. It doesn't take into account your timezone, nor any Summertime adjustment. When you display the time to the user in your code, via UIKit or SwiftUI, you use a DateFormatter
     */
