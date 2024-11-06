@@ -1,7 +1,6 @@
 import XCTest
 @testable import NetTime
 import Foundation
-import NetTime
 import Logger
 
 final class NetTimeTests: XCTestCase {
