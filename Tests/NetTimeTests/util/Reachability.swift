@@ -8,7 +8,7 @@ import Foundation
 internal class Reachability {
    /**
     * Checks to see if internet is reachable
-    * - fixme: add description
+    * - Description: This method checks the reachability of the internet by performing a network request to a reliable host and returns the result through a completion handler.
     * - Note: The reason why we do async: https://stackoverflow.com/a/40764725/5389500
     * - Parameters:
     *   - completionHandler: The closure to call with the result of the network check.
