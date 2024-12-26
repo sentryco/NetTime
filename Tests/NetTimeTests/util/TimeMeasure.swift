@@ -27,7 +27,7 @@ internal final class TimeMeasure {
     *                execution.
     * - Note: This method is great for UnitTesting
     * - Note: it's also possible to use. `let startTime = CFAbsoluteTimeGetCurrent(); CFAbsoluteTimeGetCurrent() - startTime`
-    * - Fixme: ⚠️️ Add param comment
+    * - Parameter closure: The operation to measure, provided as a closure that takes no parameters and returns nothing
     * ## Examples:
     * print("\(timeElapsed { sleep(2.2) })") // 2.20000
     */
