@@ -6,10 +6,9 @@ Network-time-synchronization in swift
 
 ## Features
 
-- Network Time Protocol (NTP) support for accurate time synchronization.
-- Easy to use API for fetching and using network time.
-- Caching of server time for quick access.
-- Compatible with iOS and macOS.
+- ⏰ Network Time Protocol (NTP) support for accurate time synchronization.
+- 🛠️ Easy to use API for fetching and using network time.
+- 💾 Caching of server time for quick access.
 
 ## Requirements
 
