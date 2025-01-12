@@ -48,10 +48,12 @@ extension Date {
     *           server even when the user's clock isn't.
     */
    public static var serverTime: Date {
-      let possibleDate: Date = Date() // Get the current time
-      let ignorableNetworkDelay: TimeInterval = 2 // Define the maximum network delay latency limit
-      guard abs(timeGap) > ignorableNetworkDelay else { return possibleDate } // If the absolute value of `timeGap` is less than or equal to `ignorableNetworkDelay`, return `possibleDate`
-      return possibleDate.advanced(by: timeGap) // Otherwise, offset `possibleDate` by `timeGap` and return the resulting date
+       synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
+         let possibleDate: Date = Date() // Get the current time
+         let ignorableNetworkDelay: TimeInterval = 2 // Define the maximum network delay latency limit
+         guard abs(timeGap) > ignorableNetworkDelay else { return possibleDate } // If the absolute value of `timeGap` is less than or equal to `ignorableNetworkDelay`, return `possibleDate`
+         return possibleDate.advanced(by: timeGap) // Otherwise, offset `possibleDate` by `timeGap` and return the resulting date
+       }
    }
    /**
     * - Description: This function updates the server time by making a network
@@ -141,6 +143,9 @@ extension Date {
       formatter.timeZone = TimeZone(abbreviation: "GMT")
       return formatter
    }()
+   
+   private static let synchronizationQueue = DispatchQueue(label: "com.yourapp.NTTimeSynchronization")
+
    /**
     * Time-gap between network call and network response
     * - Description: This variable represents the time discrepancy between
@@ -156,8 +161,10 @@ extension Date {
     */
    fileprivate static var referenceDate: Date = .init() {
       didSet {
-         // Calculate the time difference between the current date and the reference date, and assign it to timeGap
-         timeGap = Date().distance(to: referenceDate)
+         synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
+            // Calculate the time difference between the current date and the reference date, and assign it to timeGap
+            timeGap = Date().distance(to: referenceDate)
+          }
       }
    }
 }
