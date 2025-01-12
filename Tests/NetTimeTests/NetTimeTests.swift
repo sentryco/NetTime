@@ -98,9 +98,12 @@ extension NetTimeTests {
             switch result {
             case .success:
                Swift.print("🌍 TimeZone.current: \(TimeZone.current.description)") // Print the current time zone
-               Swift.print("☀️ Current Date: \(Date().formatted())") // Print the current date
-               Swift.print("☎️ Server time: \(Date.serverTime.formatted())") // Print the server time
-               exception.fulfill() // Fulfill the exception
+                   // Start of Selection
+                   let dateFormatter = DateFormatter()
+                   dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"
+                   Swift.print("☀️ Current Date: \(dateFormatter.string(from: Date()))") // Print the current date with milliseconds and microseconds
+                   Swift.print("☎️ Server time: \(dateFormatter.string(from: Date.serverTime))") // Print the server time with milliseconds and microseconds
+                   exception.fulfill() // Fulfill the exception
             case .failure(let error):
                print("⚠️️ Failed to update time: \(error.localizedDescription)")
                // fail here

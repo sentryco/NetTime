@@ -1,11 +1,5 @@
-//
-//  UnitTests.swift
-//  NetTime
-//
-//  Created by eon on 12/01/2025.
-//
-
 import XCTest
+@testable import NetTime
 
 final class UnitTests: XCTestCase {
     func testDateFormatterParsing() {

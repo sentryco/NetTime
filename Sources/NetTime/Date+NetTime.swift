@@ -128,16 +128,13 @@ extension Date {
     * - Description: This is a DateFormatter used to convert the "Date" header
     *                field from the server response into a Date object. It is
     *                configured to match the expected date format from the
-    *                server, and uses the current time zone and US English
-    *                locale.
+    *                server, and uses the POSIX locale for consistent parsing.
     */
    internal static let formatter: DateFormatter = {
-      let formatter: DateFormatter = .init() // Create a new date formatter
-      formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z" // Set the date format
-      formatter.timeZone = TimeZone.current // Set the time zone to the current time zone
-      formatter.locale = Locale(identifier: "en-US") // Set the locale to US English
-      formatter.dateStyle = .long // Set the date style to long
-      formatter.timeStyle = .long // Set the time style to long
+      let formatter = DateFormatter()
+      formatter.locale = Locale(identifier: "en_US_POSIX")
+      formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+      formatter.timeZone = TimeZone(abbreviation: "GMT")
       return formatter
    }()
    /**
