@@ -54,6 +54,7 @@ extension Date {
    public static var serverTime: Date {
        synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
          let possibleDate: Date = Date() // Get the current time
+         guard timeGap != 0 else { return possibleDate } // Avoid unnecessary calculations if timeGap is zero.
          guard abs(timeGap) > Self.ignorableNetworkDelay else { return possibleDate } // If the absolute value of `timeGap` is less than or equal to `ignorableNetworkDelay`, return `possibleDate`
          return possibleDate.advanced(by: timeGap) // Otherwise, offset `possibleDate` by `timeGap` and return the resulting date
        }
@@ -86,6 +87,7 @@ extension Date {
       guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(NSError.init(domain: "URL err", code: 0))); return } // Create a URL object from a string, and return if it fails
       // We expect the date to be accurate, so we disable caching.
       let sessionConfig = URLSessionConfiguration.default
+      sessionConfig.timeoutIntervalForRequest = 10 // Timeout after 10 seconds
       sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
       let session = URLSession(configuration: sessionConfig)
       let task = /*URLSession.shared*/session.dataTask(with: url) { (_, response, error) in
