@@ -13,14 +13,14 @@ let package = Package(
             targets: ["NetTime"])
     ],
     dependencies: [
-        .package(url: "https://github.com/sentryco/Logger.git", branch: "main")
+//        .package(url: "https://github.com/sentryco/Logger.git", branch: "main")
     ],
     targets: [
         .target(
             name: "NetTime",
-            dependencies: ["Logger"]),
+            dependencies: [/*"Logger"*/]),
         .testTarget(
             name: "NetTimeTests",
-            dependencies: ["NetTime", "Logger"])
+            dependencies: ["NetTime"/*, "Logger"*/])
     ]
 )

@@ -1,5 +1,5 @@
 import Foundation
-import Logger
+//import Logger
 /**
  * Class which will provide the best estimate of the difference in time between the device's system clock and the time returned by a collection of time servers
  * - Description: This class estimates the time difference between the
@@ -72,7 +72,7 @@ extension Date {
        with url: URL? = URL(string: "https://www.apple.com"),
        onComplete: @escaping OnComplete = defaultOnComplete
    ) {
-      Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
+      // Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
       guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(NSError.init(domain: "URL err", code: 0))); return } // Create a URL object from a string, and return if it fails
       let task = URLSession.shared.dataTask(with: url) { (_, response, error) in
            DispatchQueue.main.async { // Switch to the main thread
