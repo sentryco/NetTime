@@ -24,15 +24,19 @@ extension Date {
     *                as a completion handler in various functions within this
     *                extension.
     */
-   // public typealias OnComplete = (´) -> Void
    public typealias OnComplete = (Result<Void, Error>) -> Void
-
    /**
     * - Description: This is the default completion handler for the
     *                updateTime function. It does nothing when called, and is
     *                used when no other completion handler is provided.
     */
    public static let defaultOnComplete: OnComplete = { _ in } // - Fixme: ⚠️️ add result printing here
+   /**
+    * Define the maximum network delay latency limit
+    * - Note: ignores the time gap if it's less than 2 seconds. Consider allowing this threshold to be configurable.
+    * - Fixme: ⚠️️ add doc
+    */
+   public static var ignorableNetworkDelay: TimeInterval = 2
    /**
     * Subsequent date getter calls goes here
     * - Abstract: Allows you to make sure your time is synced up to a remote
@@ -50,12 +54,12 @@ extension Date {
    public static var serverTime: Date {
        synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
          let possibleDate: Date = Date() // Get the current time
-         let ignorableNetworkDelay: TimeInterval = 2 // Define the maximum network delay latency limit
-         guard abs(timeGap) > ignorableNetworkDelay else { return possibleDate } // If the absolute value of `timeGap` is less than or equal to `ignorableNetworkDelay`, return `possibleDate`
+         guard abs(timeGap) > Self.ignorableNetworkDelay else { return possibleDate } // If the absolute value of `timeGap` is less than or equal to `ignorableNetworkDelay`, return `possibleDate`
          return possibleDate.advanced(by: timeGap) // Otherwise, offset `possibleDate` by `timeGap` and return the resulting date
        }
    }
    /**
+    * Updates the server time by synchronizing with a specified URL.
     * - Description: This function updates the server time by making a network
     *                call to a specified URL and retrieving the date from the
     *                response headers. It then calculates the time difference
@@ -69,9 +73,9 @@ extension Date {
     * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
     * - Fixme: ⚠️️ maybe create proper error enum? 👈
     * fixme: add custom formatter in init, as each url may have different formatter styles etc
-    * - Parameter onComplete: Callback when server has responded
-    * - Parameter url: - Fixme: ⚠️️ add doc
-    * - Parameter queue: - Fixme: ⚠️️ add doc
+    * - Parameter onComplete:  A closure to be called when the update completes, containing a `Result`.
+    * - Parameter url: The URL to synchronize time with. Defaults to `https://www.apple.com`.
+    * - Parameter queue: The dispatch queue to call the completion handler on. Defaults to `.main`.
     */
    public static func updateTime(
        with url: URL? = URL(string: "https://www.apple.com"),
@@ -80,48 +84,33 @@ extension Date {
    ) {
       // Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
       guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(NSError.init(domain: "URL err", code: 0))); return } // Create a URL object from a string, and return if it fails
-      let task = URLSession.shared.dataTask(with: url) { (_, response, error) in
-           queue.async { // Switch to the main thread
+      // We expect the date to be accurate, so we disable caching.
+      let sessionConfig = URLSessionConfiguration.default
+      sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
+      let session = URLSession(configuration: sessionConfig)
+      let task = /*URLSession.shared*/session.dataTask(with: url) { (_, response, error) in
+         queue.async { // Switch to the main thread
+            do {
                if let error = error {
-                   onComplete(.failure(error)) // Call the completion handler
-                   return
+                  throw NetTimeError.networkError(.underlayError(error))
                }
-                   // Start of Selection
-                   guard let httpResponse = response as? HTTPURLResponse else {
-                       let error = NSError(
-                           domain: "NetTime",
-                           code: -1,
-                           userInfo: [NSLocalizedDescriptionKey: "Response was not an HTTPURLResponse"]
-                       )
-                       onComplete(.failure(error))
-                       return
-                   }
-              // Swift.print("httpResponse.allHeaderFields[Date]:  \(httpResponse.allHeaderFields["Date"])")
-//              Swift.print("httpResponse.allHeaderFields:  \(httpResponse.allHeaderFields)")
-                   guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
-                       let error = NSError(
-                           domain: "NetTime",
-                           code: -1,
-                           userInfo: [NSLocalizedDescriptionKey: "Failed to get 'Date' from response headers"]
-                       )
-                       onComplete(.failure(error))
-                       return
-                   }
-
-                   guard let date = formatter.date(from: stringDate) else {
-                       let error = NSError(
-                           domain: "NetTime",
-                           code: -1,
-                           userInfo: [NSLocalizedDescriptionKey: "Failed to parse date from 'Date' header"]
-                       )
-                       onComplete(.failure(error))
-                       return
-                   }
+               guard let httpResponse = response as? HTTPURLResponse else {
+                  throw NetTimeError.networkError(.responseNotHTTPURLResponse)
+               }
+               guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
+                  throw NetTimeError.networkError(.missingDateHeader)
+               }
+               guard let date = formatter.date(from: stringDate) else {
+                  throw NetTimeError.networkError(.dateParsingFailedFromHeader)
+               }
                referenceDate = date // Set the reference date to the current date
                onComplete(.success(()))
-           }
-       }
-       task.resume() // Start the data task
+            } catch {
+               onComplete(.failure(error))
+            }
+         }
+      }
+      task.resume() // Start the data task
    }
 }
 /**
@@ -143,9 +132,10 @@ extension Date {
       formatter.timeZone = TimeZone(abbreviation: "GMT")
       return formatter
    }()
-   
+   /**
+    * - Fixme: ⚠️️ add doc
+    */
    private static let synchronizationQueue = DispatchQueue(label: "com.yourapp.NTTimeSynchronization")
-
    /**
     * Time-gap between network call and network response
     * - Description: This variable represents the time discrepancy between
@@ -165,6 +155,30 @@ extension Date {
             // Calculate the time difference between the current date and the reference date, and assign it to timeGap
             timeGap = Date().distance(to: referenceDate)
           }
+      }
+   }
+}
+enum NetTimeError: Error {
+    case invalidURL
+    case dateParsingFailed
+    case networkError(NetworkError)
+   enum NetworkError: LocalizedError {
+      case underlayError(Error)
+      case responseNotHTTPURLResponse
+      case missingDateHeader
+      case dateParsingFailedFromHeader
+
+      var errorDescription: String? {
+         switch self {
+         case .responseNotHTTPURLResponse:
+               return "Response was not an HTTPURLResponse"
+         case .missingDateHeader:
+               return "Failed to get 'Date' from response headers"
+         case .dateParsingFailedFromHeader:
+               return "Failed to parse date from 'Date' header"
+         case .underlayError(let error):
+            return error.localizedDescription
+         }
       }
    }
 }
