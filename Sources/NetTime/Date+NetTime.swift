@@ -66,16 +66,20 @@ extension Date {
     * - Remark: If this is not called e use system time
     * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
     * - Fixme: ⚠️️ maybe create proper error enum? 👈
+    * fixme: add custom formatter in init, as each url may have different formatter styles etc
     * - Parameter onComplete: Callback when server has responded
+    * - Parameter url: - Fixme: ⚠️️ add doc
+    * - Parameter queue: - Fixme: ⚠️️ add doc
     */
    public static func updateTime(
        with url: URL? = URL(string: "https://www.apple.com"),
+       queue: DispatchQueue = .main,
        onComplete: @escaping OnComplete = defaultOnComplete
    ) {
       // Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
       guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(NSError.init(domain: "URL err", code: 0))); return } // Create a URL object from a string, and return if it fails
       let task = URLSession.shared.dataTask(with: url) { (_, response, error) in
-           DispatchQueue.main.async { // Switch to the main thread
+           queue.async { // Switch to the main thread
                if let error = error {
                    onComplete(.failure(error)) // Call the completion handler
                    return
@@ -90,7 +94,7 @@ extension Date {
                        onComplete(.failure(error))
                        return
                    }
-              Swift.print("httpResponse.allHeaderFields[Date]:  \(httpResponse.allHeaderFields["Date"])")
+              // Swift.print("httpResponse.allHeaderFields[Date]:  \(httpResponse.allHeaderFields["Date"])")
 //              Swift.print("httpResponse.allHeaderFields:  \(httpResponse.allHeaderFields)")
                    guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
                        let error = NSError(
