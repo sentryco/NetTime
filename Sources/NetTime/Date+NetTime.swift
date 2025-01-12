@@ -24,7 +24,7 @@ extension Date {
     *                as a completion handler in various functions within this
     *                extension.
     */
-   public typealias OnComplete = (Result<Void, Error>) -> Void
+   public typealias OnComplete = (Result<Void, NetTimeError>) -> Void
    /**
     * - Description: This is the default completion handler for the
     *                updateTime function. It does nothing when called, and is
@@ -84,7 +84,7 @@ extension Date {
        onComplete: @escaping OnComplete = defaultOnComplete
    ) {
       // Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
-      guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(NSError.init(domain: "URL err", code: 0))); return } // Create a URL object from a string, and return if it fails
+      guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(.invalidURL(url))); return } // Create a URL object from a string, and return if it fails
       // We expect the date to be accurate, so we disable caching.
       let sessionConfig = URLSessionConfiguration.default
       sessionConfig.timeoutIntervalForRequest = 10 // Timeout after 10 seconds
@@ -92,24 +92,23 @@ extension Date {
       let session = URLSession(configuration: sessionConfig)
       let task = /*URLSession.shared*/session.dataTask(with: url) { (_, response, error) in
          queue.async { // Switch to the main thread
-            do {
-               if let error = error {
-                  throw NetTimeError.networkError(.underlayError(error))
-               }
-               guard let httpResponse = response as? HTTPURLResponse else {
-                  throw NetTimeError.networkError(.responseNotHTTPURLResponse)
-               }
-               guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
-                  throw NetTimeError.networkError(.missingDateHeader)
-               }
-               guard let date = formatter.date(from: stringDate) else {
-                  throw NetTimeError.networkError(.dateParsingFailedFromHeader)
-               }
-               referenceDate = date // Set the reference date to the current date
-               onComplete(.success(()))
-            } catch {
-               onComplete(.failure(error))
+            guard let httpResponse = response as? HTTPURLResponse else {
+               onComplete(.failure(.invalidResponse))
+               return
             }
+            guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
+               onComplete(.failure(.missingDateHeader))
+               return
+            }
+            guard let date = formatter.date(from: stringDate) else {
+               onComplete(.failure(.dateParsingFailed))
+               return
+            }
+            synchronizationQueue.sync {
+               referenceDate = date
+               timeGap = Date().distance(to: referenceDate)
+            }
+            onComplete(.success(()))
          }
       }
       task.resume() // Start the data task
@@ -145,42 +144,40 @@ extension Date {
     *                response. It is utilized to synchronize the local time
     *                with the server time.
     */
-   fileprivate static var timeGap: TimeInterval = 0
+   internal static var timeGap: TimeInterval = 0
    /**
     * Update time-gap
     * - Description: Calculate the time gap between the current date and the
     *                reference date, and store it in `timeGap`
     */
-   fileprivate static var referenceDate: Date = .init() {
-      didSet {
-         synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
-            // Calculate the time difference between the current date and the reference date, and assign it to timeGap
-            timeGap = Date().distance(to: referenceDate)
-          }
-      }
-   }
+   fileprivate static var referenceDate: Date = .init() 
+   // {
+   //    didSet {
+   //       synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
+   //          // Calculate the time difference between the current date and the reference date, and assign it to timeGap
+   //          timeGap = Date().distance(to: referenceDate)
+   //        }
+   //    }
+   // }
 }
-enum NetTimeError: Error {
-    case invalidURL
-    case dateParsingFailed
-    case networkError(NetworkError)
-   enum NetworkError: LocalizedError {
-      case underlayError(Error)
-      case responseNotHTTPURLResponse
-      case missingDateHeader
-      case dateParsingFailedFromHeader
-
-      var errorDescription: String? {
-         switch self {
-         case .responseNotHTTPURLResponse:
-               return "Response was not an HTTPURLResponse"
-         case .missingDateHeader:
-               return "Failed to get 'Date' from response headers"
-         case .dateParsingFailedFromHeader:
-               return "Failed to parse date from 'Date' header"
-         case .underlayError(let error):
-            return error.localizedDescription
-         }
+public enum NetTimeError: Error {
+   case invalidURL(URL?)
+   case networkError(Error)
+   case invalidResponse
+   case missingDateHeader
+   case dateParsingFailed
+   public var errorDescription: String? {
+      switch self {
+      case .invalidURL(let url):
+         return "Invalid URL: \(String(describing: url))"
+      case .invalidResponse:
+         return "Response was not an HTTPURLResponse"
+      case .missingDateHeader:
+         return "Failed to get 'Date' from response headers"
+      case .dateParsingFailed:
+         return "Failed to parse date from 'Date' header"
+      case .networkError(let error):
+         return error.localizedDescription
       }
    }
 }
