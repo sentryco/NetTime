@@ -1,18 +1,9 @@
 import XCTest
 @testable import NetTime
 import Foundation
-//import Logger
 
 final class NetTimeTests: XCTestCase {
     func testExample() throws {
-//       Logger.setup( // Initialize the Logger with the specified configuration and mode, excluding the 'info' log level
-//         config: .plain, // The logger configuration to use
-//         mode: .init( // Initialize the logger mode with specific tags and levels
-//            tag: LogTag.allCases, // The log tags to include in the logger mode
-//            level: LogLevel.allCases.filter({ $0 != .info }) // The log levels to include in the logger mode
-//         ),
-//         type: .console // The logger output type to use
-//       )
        do {
           try Self.time(testCase: self) // Testing time (NTPTime, Reachability)
        } catch {
@@ -34,8 +25,8 @@ extension NetTimeTests {
     *                framework.
     */
    fileprivate static func time(testCase: XCTestCase) throws {
-//      try Self.testTimeZoneConversion() // Test time zone conversion functionality of the database
-      // try Self.testConnectivity(testCase: testCase) // Test connectivity functionality of the database
+      try Self.testTimeZoneConversion() // Test time zone conversion functionality of the database
+      try Self.testConnectivity(testCase: testCase) // Test connectivity functionality of the database
       try Self.serverTime(testCase: testCase) // Test server time functionality of the database
    }
    /**
