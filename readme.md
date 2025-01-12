@@ -4,11 +4,29 @@
 
 Network-time-synchronization in swift
 
+
+## Problem
+
+1. ⏰ **Inaccurate Device Time**: Device clocks drift or can be adjusted, leading to unreliable timestamps in time-sensitive apps.
+
+2. 🔄 **Inconsistent Time Synchronization**: Synchronizing time across devices is challenging, causing inconsistencies in systems that rely on precise timing.
+
+3. 🛠️ **Complex Implementation**: Accurate network time synchronization is complex, and existing solutions may lack user-friendly Swift interfaces.
+
+## Solution
+
+1. 🕒 **Reliable Time Sync**: NetTime uses NTP to synchronize device time with network servers, ensuring accuracy despite clock drift.
+
+2. 🤝 **Consistent Time Across Devices**: By fetching standardized network time and adjusting for delays, NetTime synchronizes devices consistently.
+
+3. 🎯 **Simple API**: NetTime offers a straightforward, user-friendly API for easy implementation in Swift applications.
+
 ## Features
 
-- ⏰ Network Time Protocol (NTP) support for accurate time synchronization.
-- 🛠️ Easy to use API for fetching and using network time.
-- 💾 Caching of server time for quick access.
+- ⏰ **Accurate Time Synchronization**: Implements NTP protocol to synchronize device time with network time servers.
+- 🛠️ **Simple API**: User-friendly interfaces for fetching and utilizing network time efficiently.
+- 💾 **Time Caching**: Stores the server time locally to reduce network calls and improve performance.
+- 🌐 **Customizable NTP Servers**: Ability to specify custom NTP servers for specialized requirements.
 
 ## Requirements
 
@@ -68,11 +86,11 @@ NetTime is released under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Todo:
 - Do more exploration into side-effects
-- Comb the competitors for ways to improve
+- Go through the competitors for ways to improve
 - add Troubleshooting or FAQ section: If there are common issues users run into, addressing them in the README can save time for both you and the users.
 - add Versioning: If you're planning on maintaining this project long-term, it might be helpful to include information about the versioning system you're using.
 - add Screenshots or GIFs: If applicable, visual aids can help users understand how your package works or what it looks like when it's running.
 - Error Handling and Logging: The current implementation of network requests and error handling could be improved for better reliability and maintainability. For instance, in the updateTime function in Date+NetTime.swift, the error handling is minimal and does not provide detailed feedback for debugging. Action: Enhance error handling by using Result types or throwing errors that can be caught and handled appropriately. Also, improve logging to capture more detailed information about the state and errors.
 - Unit Testing: The unit tests could be expanded to cover more scenarios and ensure robustness. For example, the NetTimeTests.swift file shows tests for time conversion and connectivity but could include more comprehensive tests for error cases and edge cases. Action: Add more comprehensive tests, particularly focusing on failure modes and network issues.
 - Network Reliability The Reachability.swift utility checks for internet connectivity but could be enhanced to handle different network conditions more robustly. Action: Enhance the network reachability checks to handle various network conditions and provide fallbacks or retries.
-- Remove Logger as a dependency. do logging in higher levels of the code etc.
+- Remove Logger as a dependency. do logging in higher levels of the code etc. ✅

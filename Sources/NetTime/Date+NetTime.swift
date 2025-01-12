@@ -73,6 +73,7 @@ extension Date {
     * - Remark: If this is not called e use system time
     * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
     * - Fixme: ⚠️️ maybe create proper error enum? 👈
+    * fixme: use async Use async/await for Asynchronous Code (iOS 15+/macOS 12+): Modernize asynchronous calls using Swift's concurrency model.
     * fixme: add custom formatter in init, as each url may have different formatter styles etc
     * - Parameter onComplete:  A closure to be called when the update completes, containing a `Result`.
     * - Parameter url: The URL to synchronize time with. Defaults to `https://www.apple.com`.
