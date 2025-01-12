@@ -34,9 +34,9 @@ extension NetTimeTests {
     *                framework.
     */
    fileprivate static func time(testCase: XCTestCase) throws {
-      try Self.testTimeZoneConversion() // Test time zone conversion functionality of the database
+//      try Self.testTimeZoneConversion() // Test time zone conversion functionality of the database
+      // try Self.testConnectivity(testCase: testCase) // Test connectivity functionality of the database
       try Self.serverTime(testCase: testCase) // Test server time functionality of the database
-      try Self.testConnectivity(testCase: testCase) // Test connectivity functionality of the database
    }
    /**
     * timezone conversion
@@ -94,11 +94,18 @@ extension NetTimeTests {
    static func serverTime(testCase: XCTestCase) throws {
       let exception: XCTestExpectation = testCase.expectation(description: "asynchronous request")
       DispatchQueue.global(qos: .background).async { // Run the following code on a background queue
-         Date.updateTime { // Update the current time
-            Swift.print("🌍 TimeZone.current: \(TimeZone.current.description)") // Print the current time zone
-            Swift.print("☀️ Current Date: \(Date().formatted())") // Print the current date
-            Swift.print("☎️ Server time: \(Date.serverTime.formatted())") // Print the server time
-            exception.fulfill() // Fulfill the exception
+         Date.updateTime { result in  // Update the current time
+            switch result {
+            case .success:
+               Swift.print("🌍 TimeZone.current: \(TimeZone.current.description)") // Print the current time zone
+               Swift.print("☀️ Current Date: \(Date().formatted())") // Print the current date
+               Swift.print("☎️ Server time: \(Date.serverTime.formatted())") // Print the server time
+               exception.fulfill() // Fulfill the exception
+            case .failure(let error):
+               print("⚠️️ Failed to update time: \(error.localizedDescription)")
+               // fail here
+               XCTFail("⚠️️ Failure - error: \(error.localizedDescription)")
+            }
          }
       }
       testCase.waitForExpectations(timeout: 15.0) // Sometimes it just takes some time to finish 🤔

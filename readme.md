@@ -32,9 +32,14 @@ Here's an example of how to use NetTime:
 ```swift
 import NetTime
 
-Date.updateTime { // Call when app launches etc
-    print("☀️ Current Date: \(Date().formatted())")
-    print("☎️ Server time: \(Date.serverTime.formatted())")
+Date.updateTime { result in // Call when app launches etc
+    switch result {
+    case .success:
+        print("☀️ Current Date: \(Date().formatted())")
+        print("☎️ Server time: \(Date.serverTime.formatted())")
+    case .failure(let error):
+        print("Failed to update time: \(error.localizedDescription)")
+    }
 }
 Date.serverTime // Returns the cached server date
 ```

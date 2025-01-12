@@ -24,13 +24,15 @@ extension Date {
     *                as a completion handler in various functions within this
     *                extension.
     */
-   public typealias OnComplete = () -> Void
+   // public typealias OnComplete = (´) -> Void
+   public typealias OnComplete = (Result<Void, Error>) -> Void
+
    /**
     * - Description: This is the default completion handler for the
     *                updateTime function. It does nothing when called, and is
     *                used when no other completion handler is provided.
     */
-   public static let defaultOnComplete: OnComplete = {}
+   public static let defaultOnComplete: OnComplete = { _ in } // - Fixme: ⚠️️ add result printing here
    /**
     * Subsequent date getter calls goes here
     * - Abstract: Allows you to make sure your time is synced up to a remote
@@ -62,8 +64,8 @@ extension Date {
     * - Remark: Set this at the first opertunity when using the app
     * - Remark: Call this on background queue
     * - Remark: If this is not called e use system time
-    * - Fixme: ⚠️️ Add a way to add a custom server URL
     * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
+    * - Fixme: ⚠️️ maybe create proper error enum? 👈
     * - Parameter onComplete: Callback when server has responded
     */
    public static func updateTime(
@@ -71,21 +73,49 @@ extension Date {
        onComplete: @escaping OnComplete = defaultOnComplete
    ) {
       Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
-      guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(); return } // Create a URL object from a string, and return if it fails
-      let task: URLSessionDataTask = URLSession.shared.dataTask(with: url) { (_: Data?, response: URLResponse?, _: Error?) in // Create a data task with the URL
-         DispatchQueue.main.async { // Switch to the main thread
-            let httpResponse: HTTPURLResponse? = response as? HTTPURLResponse // Cast the response to an HTTPURLResponse object
-            if let stringDate: String = httpResponse?.allHeaderFields["Date"] as? String { // Get the "Date" header field from the response
-               referenceDate = formatter.date(from: stringDate) ?? .init() // Convert the string date to a Date object using the formatter, or use the current date if it fails
-               onComplete() // Call the completion handler
-            } else {
-               Logger.info("\(Trace.trace()) - Getting reference date from web failed", tag: .net) // Log an error message
-               referenceDate = .init() // Set the reference date to the current date
-               onComplete() // Call the completion handler
-            }
-         }
-      }
-      task.resume() // Start the data task
+      guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(NSError.init(domain: "URL err", code: 0))); return } // Create a URL object from a string, and return if it fails
+      let task = URLSession.shared.dataTask(with: url) { (_, response, error) in
+           DispatchQueue.main.async { // Switch to the main thread
+               if let error = error {
+                   onComplete(.failure(error)) // Call the completion handler
+                   return
+               }
+                   // Start of Selection
+                   guard let httpResponse = response as? HTTPURLResponse else {
+                       let error = NSError(
+                           domain: "NetTime",
+                           code: -1,
+                           userInfo: [NSLocalizedDescriptionKey: "Response was not an HTTPURLResponse"]
+                       )
+                       onComplete(.failure(error))
+                       return
+                   }
+              Swift.print("httpResponse.allHeaderFields[Date]:  \(httpResponse.allHeaderFields["Date"])")
+//              Swift.print("httpResponse.allHeaderFields:  \(httpResponse.allHeaderFields)")
+                   guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
+                       let error = NSError(
+                           domain: "NetTime",
+                           code: -1,
+                           userInfo: [NSLocalizedDescriptionKey: "Failed to get 'Date' from response headers"]
+                       )
+                       onComplete(.failure(error))
+                       return
+                   }
+
+                   guard let date = formatter.date(from: stringDate) else {
+                       let error = NSError(
+                           domain: "NetTime",
+                           code: -1,
+                           userInfo: [NSLocalizedDescriptionKey: "Failed to parse date from 'Date' header"]
+                       )
+                       onComplete(.failure(error))
+                       return
+                   }
+               referenceDate = date // Set the reference date to the current date
+               onComplete(.success(()))
+           }
+       }
+       task.resume() // Start the data task
    }
 }
 /**
@@ -101,7 +131,7 @@ extension Date {
     *                server, and uses the current time zone and US English
     *                locale.
     */
-   fileprivate static let formatter: DateFormatter = {
+   internal static let formatter: DateFormatter = {
       let formatter: DateFormatter = .init() // Create a new date formatter
       formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z" // Set the date format
       formatter.timeZone = TimeZone.current // Set the time zone to the current time zone
