@@ -66,9 +66,12 @@ extension Date {
     * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
     * - Parameter onComplete: Callback when server has responded
     */
-   public static func updateTime(onComplete: @escaping OnComplete = defaultOnComplete) {
+   public static func updateTime(
+       with url: URL? = URL(string: "https://www.apple.com"),
+       onComplete: @escaping OnComplete = defaultOnComplete
+   ) {
       Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
-      guard let url: URL = URL(string: "https://www.apple.com") else { onComplete(); return } // Create a URL object from a string, and return if it fails
+      guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(); return } // Create a URL object from a string, and return if it fails
       let task: URLSessionDataTask = URLSession.shared.dataTask(with: url) { (_: Data?, response: URLResponse?, _: Error?) in // Create a data task with the URL
          DispatchQueue.main.async { // Switch to the main thread
             let httpResponse: HTTPURLResponse? = response as? HTTPURLResponse // Cast the response to an HTTPURLResponse object
