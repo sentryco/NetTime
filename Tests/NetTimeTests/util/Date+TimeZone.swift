@@ -97,14 +97,15 @@ extension Date {
     *           time zone. If the `self` date is not in the `timeZone` time zone,
     *           the conversion may produce unexpected results.
     */
-//   internal func convert(from timeZone: TimeZone, to destinationTimeZone: TimeZone) -> Date? {
-//      let calendar: Calendar = .current // Get current calendar
-//      var components: DateComponents = calendar.dateComponents(in: timeZone, from: self) // Get date components in specified time zone
-//      components.timeZone = destinationTimeZone // Set destination time zone
-//      return calendar.date(from: components) // Return date in destination time zone
-//   }
-    internal func converted(to timeZone: TimeZone) -> Date {
-         let delta = TimeInterval(timeZone.secondsFromGMT(for: self) - TimeZone.current.secondsFromGMT(for: self))
-         return addingTimeInterval(delta)
-      }
+   internal func convert(from timeZone: TimeZone, to destinationTimeZone: TimeZone) -> Date? {
+      let calendar: Calendar = .current // Get current calendar
+      var components: DateComponents = calendar.dateComponents(in: timeZone, from: self) // Get date components in specified time zone
+      components.timeZone = destinationTimeZone // Set destination time zone
+      return calendar.date(from: components) // Return date in destination time zone
+   }
+   // - Fixme: ⚠️️ simplify with the bellow later
+//    internal func converted(to timeZone: TimeZone) -> Date {
+//         let delta = TimeInterval(timeZone.secondsFromGMT(for: self) - TimeZone.current.secondsFromGMT(for: self))
+//         return addingTimeInterval(delta)
+//      }
 }
