@@ -90,27 +90,28 @@ extension Date {
       sessionConfig.timeoutIntervalForRequest = 10 // Timeout after 10 seconds
       sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
       let session = URLSession(configuration: sessionConfig)
-      let task = /*URLSession.shared*/session.dataTask(with: url) { (_, response, error) in
-         queue.async { // Switch to the main thread
-            guard let httpResponse = response as? HTTPURLResponse else {
-               onComplete(.failure(.invalidResponse))
-               return
-            }
-            guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
-               onComplete(.failure(.missingDateHeader))
-               return
-            }
-            guard let date = formatter.date(from: stringDate) else {
-               onComplete(.failure(.dateParsingFailed))
-               return
-            }
-            synchronizationQueue.sync {
-               referenceDate = date
-               timeGap = Date().distance(to: referenceDate)
-            }
-            onComplete(.success(()))
-         }
-      }
+          // Start of Selection
+          let task = session.dataTask(with: url) { (_, response, error) in
+             queue.async {
+                let result: Result<Void, NetTimeError> = {
+                   guard let httpResponse = response as? HTTPURLResponse else {
+                      return .failure(.invalidResponse)
+                   }
+                   guard let stringDate = httpResponse.allHeaderFields["Date"] as? String else {
+                      return .failure(.missingDateHeader)
+                   }
+                   guard let date = formatter.date(from: stringDate) else {
+                      return .failure(.dateParsingFailed)
+                   }
+                   synchronizationQueue.sync {
+                      referenceDate = date
+                      timeGap = Date().distance(to: referenceDate)
+                   }
+                   return .success(())
+                }()
+                onComplete(result)
+             }
+          }
       task.resume() // Start the data task
    }
 }
