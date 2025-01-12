@@ -1,11 +1,16 @@
 import Foundation
-
+/**
+ * An enumeration of error types that can occur during network time synchronization.
+ */
 public enum NetTimeError: Error {
    case invalidURL(URL?)
    case networkError(Error)
    case invalidResponse
    case missingDateHeader
    case dateParsingFailed
+   /**
+    * A human-readable description of the error.
+    */
    public var errorDescription: String? {
       switch self {
       case .invalidURL(let url):

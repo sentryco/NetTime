@@ -4,7 +4,6 @@
 
 Network-time-synchronization in swift
 
-
 ## Problem
 
 1. ⏰ **Inaccurate Device Time**: Device clocks drift or can be adjusted, leading to unreliable timestamps in time-sensitive apps.
@@ -76,13 +75,6 @@ There are several libraries available for network time synchronization in Swift.
 > [!TIP]
 > Remember to check the documentation and the community around these libraries to ensure they fit your needs and are actively maintained.
 
-## Contributing
-
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) for details.
-
-## License
-
-NetTime is released under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Todo:
 - Do more exploration into side-effects

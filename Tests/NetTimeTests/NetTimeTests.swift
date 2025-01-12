@@ -104,4 +104,5 @@ extension NetTimeTests {
       }
       testCase.waitForExpectations(timeout: 15.0) // Sometimes it just takes some time to finish 🤔
    }
+    
 }
