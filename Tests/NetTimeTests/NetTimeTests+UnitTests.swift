@@ -1,7 +1,7 @@
 import XCTest
 @testable import NetTime
 
-final class UnitTests: XCTestCase {
+extension NetTimeTests {
    /**
     * - Fixme: ⚠️️ add doc
     */
