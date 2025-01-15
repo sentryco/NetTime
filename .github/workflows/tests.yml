@@ -1,13 +1,16 @@
-# This workflow will build a Swift project
+# This workflow will build and test a Swift project at a random time each day
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
 name: Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  schedule:
+    # Schedule the workflow to run every hour
+    - cron: '0 * * * *'
 
 jobs:
   build:
@@ -16,13 +19,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Decide whether to run tests at random time
+      shell: bash
+      run: |
+        TODAY=$(date +'%Y-%m-%d')
+        HASH=$(echo -n "$TODAY" | md5sum | cut -d' ' -f1)
+        RANDOM_HOUR=$(( 0x${HASH:0:2} % 24 ))
+        CURRENT_HOUR=$(date +'%H')
+
+        if [ "$CURRENT_HOUR" != "$(printf "%02d" $RANDOM_HOUR)" ]; then
+          echo "Not the random scheduled time (${RANDOM_HOUR}:00). Exiting."
+          exit 0
+        else
+          echo "It's the scheduled random time (${CURRENT_HOUR}:00)! Proceeding with tests."
+        fi
     - name: Set up Swift
       uses: fwal/setup-swift@v1
       with:
         swift-version: '5.9'
     - name: Build
       run: swift build -v
-    # - name: Run tests
-    #   run: swift test -v
-    # Temporarily disabling the test run on GitHub Actions due to a compatibility issue with Swift 5.9.
-    # Local tests are running fine. We are looking into resolving this issue.
+    - name: Run tests
+      run: swift test -v
