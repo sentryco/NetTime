@@ -23,7 +23,7 @@ jobs:
       shell: bash
       run: |
         TODAY=$(date +'%Y-%m-%d')
-        HASH=$(echo -n "$TODAY" | md5sum | cut -d' ' -f1)
+        HASH=$(echo -n "$TODAY" | md5)
         RANDOM_HOUR=$(( 0x${HASH:0:2} % 24 ))
         CURRENT_HOUR=$(date +'%H')
 
