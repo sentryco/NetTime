@@ -1,5 +1,4 @@
 import Foundation
-//import Logger
 /**
  * Class which will provide the best estimate of the difference in time between the device's system clock and the time returned by a collection of time servers
  * - Description: This class estimates the time difference between the
@@ -32,9 +31,10 @@ extension Date {
     */
    public static let defaultOnComplete: OnComplete = { _ in } // - Fixme: ⚠️️ add result printing here
    /**
-    * Define the maximum network delay latency limit
-    * - Note: ignores the time gap if it's less than 2 seconds. Consider allowing this threshold to be configurable.
-    * - Fixme: ⚠️️ add doc
+    * The maximum allowable network delay latency.
+    * Any time discrepancy between the device's system clock and the server's clock that is less than or equal to this threshold is considered negligible and ignored.
+    * This ensures that minor variations in network latency do not affect the synchronization process.
+    * - Note: Currently set to ignore time gaps less than 2 seconds. This threshold is configurable and can be adjusted as needed to accommodate different network conditions or requirements.
     */
    public static var ignorableNetworkDelay: TimeInterval = 2
    /**
@@ -72,26 +72,24 @@ extension Date {
     * - Remark: Call this on background queue
     * - Remark: If this is not called e use system time
     * - Fixme: ⚠️️ Add error to `onComplete` closure, use Result maybe? 👈 This way we can log the error in the caller etc
-    * - Fixme: ⚠️️ maybe create proper error enum? 👈
     * fixme: use async Use async/await for Asynchronous Code (iOS 15+/macOS 12+): Modernize asynchronous calls using Swift's concurrency model.
     * fixme: add custom formatter in init, as each url may have different formatter styles etc
-    * - Parameter onComplete:  A closure to be called when the update completes, containing a `Result`.
-    * - Parameter url: The URL to synchronize time with. Defaults to `https://www.apple.com`.
-    * - Parameter queue: The dispatch queue to call the completion handler on. Defaults to `.main`.
+    * - Parameters:
+    *   - onComplete:  A closure to be called when the update completes, containing a `Result`.
+    *   - url: The URL to synchronize time with. Defaults to `https://www.apple.com`.
+    *   - queue: The dispatch queue to call the completion handler on. Defaults to `.main`.
     */
    public static func updateTime(
        with url: URL? = URL(string: "https://www.apple.com"),
        queue: DispatchQueue = .main,
        onComplete: @escaping OnComplete = defaultOnComplete
    ) {
-      // Logger.info("\(Trace.trace()) - 🕐", tag: .db) // Log a message with the current trace and a clock emoji
-      guard let url: URL = url/*URL(string: "https://www.apple.com")*/ else { onComplete(.failure(.invalidURL(url))); return } // Create a URL object from a string, and return if it fails
+      guard let url: URL = url else { onComplete(.failure(.invalidURL(url))); return } // Create a URL object from a string, and return if it fails
       // We expect the date to be accurate, so we disable caching.
       let sessionConfig = URLSessionConfiguration.default
       sessionConfig.timeoutIntervalForRequest = 10 // Timeout after 10 seconds
       sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
       let session = URLSession(configuration: sessionConfig)
-          // Start of Selection
           let task = session.dataTask(with: url) { (_, response, error) in
              queue.async {
                 let result: Result<Void, NetTimeError> = {
@@ -119,7 +117,6 @@ extension Date {
 /**
  * Private helpers
  */
-@available(macOS 10.15, *)
 extension Date {
    /**
     * Date formatter
@@ -136,7 +133,8 @@ extension Date {
       return formatter
    }()
    /**
-    * - Fixme: ⚠️️ add doc
+    * Dispatch queue used for synchronizing access to shared resources.
+    * - Description: This queue ensures thread-safe access to `referenceDate` and `timeGap`.
     */
    private static let synchronizationQueue = DispatchQueue(label: "com.yourapp.NTTimeSynchronization")
    /**
@@ -153,12 +151,4 @@ extension Date {
     *                reference date, and store it in `timeGap`
     */
    fileprivate static var referenceDate: Date = .init() 
-   // {
-   //    didSet {
-   //       synchronizationQueue.sync { // Makes accessing referenceDate and timeGap thread-safe if accessed from multiple threads.
-   //          // Calculate the time difference between the current date and the reference date, and assign it to timeGap
-   //          timeGap = Date().distance(to: referenceDate)
-   //        }
-   //    }
-   // }
 }

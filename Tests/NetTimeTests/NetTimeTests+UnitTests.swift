@@ -3,7 +3,11 @@ import XCTest
 
 extension NetTimeTests {
    /**
-    * - Fixme: ⚠️️ add doc
+    * Test that the Date formatter correctly parses a valid date string.
+    *
+    * This test ensures that `Date.formatter` successfully converts a properly formatted
+    * date string from the server's "Date" header into a `Date` object.
+    * It verifies that all date components (year, month, day, hour, minute, second) are parsed correctly.
     */
     func testDateFormatterParsing() {
         let dateString = "Sun, 12 Jan 2025 17:44:00 GMT"
@@ -43,9 +47,11 @@ extension NetTimeTests {
         waitForExpectations(timeout: 5, handler: nil)
     }
    /**
-    * Unit Tests for Error Conditions
-    * Add unit tests that cover error scenarios, such as network failures or date parsing failures, to ensure your error handling works as expected.
-    * - Fixme: ⚠️️ add doc
+    * Test Update Time with Invalid URL
+    *
+    * This test verifies that `Date.updateTime` properly handles invalid URLs by returning an error.
+    * It ensures that when an invalid URL is provided, the function completes with a failure result,
+    * and the error is appropriately returned.
     */
     func testUpdateTimeWithInvalidURL() {
         let expectation = self.expectation(description: "Completion handler invoked")
@@ -60,7 +66,11 @@ extension NetTimeTests {
         waitForExpectations(timeout: 5, handler: nil)
     }
    /**
-    * - Fixme: ⚠️️ add doc
+    * Test Time Gap Calculation
+    *
+    * This test verifies that when a known time gap is set, `Date.serverTime` correctly adjusts the server time.
+    * It sets `Date.timeGap` to a known value (e.g., 60 seconds) and checks whether `Date.serverTime` returns the expected adjusted time.
+    * Tests that `Date.serverTime` correctly accounts for `timeGap` in its calculation.
     */
     func testTimeGapCalculation() {
          // Set a known timeGap
